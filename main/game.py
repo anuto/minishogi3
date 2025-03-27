@@ -7,5 +7,9 @@ def main():
 	
 	print_initial_state(game)
 
+	game.move_piece((0, 3), (0, 2))
+
+	draw_board(game)
+
 if __name__ == '__main__':
 	main()

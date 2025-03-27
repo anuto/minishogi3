@@ -15,6 +15,11 @@ class piece(object):
         else: # bottom side
             self.square = self.BOTTOM_START_SQUARE
 
+    def move(self, new_square):
+        self.square = new_square
+
+    def is_valid_move(self, new_square):
+        return new_square in self.get_moves()
 
     def get_moves(self):
         return ["[error] default piece behavior not overridden"]

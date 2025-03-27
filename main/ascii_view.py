@@ -1,4 +1,6 @@
 def draw_board(game):
+	print("~~~~~~~~~~~~~")
+
 	squares = game.get_squares()
 
 	for y in range(0, 5):
@@ -11,9 +13,10 @@ def draw_board(game):
 				print("[ ]", end = '')
 
 		print()
+	print("~~~~~~~~~~~~~")
+
 
 def print_initial_state(game):
-	print("~~~~~~~~~~~~~")
 
 	print("top:")
 	top_pieces = game.get_top_pieces()
@@ -28,8 +31,6 @@ def print_initial_state(game):
 	print()
 
 	draw_board(game)
-
-	print("~~~~~~~~~~~~~")
 
 def print_pieces(pieces):
 	for piece in pieces:
