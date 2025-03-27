@@ -1,0 +1,14 @@
+ 0 1 2 3 4 
+0
+1
+2
+3
+4
+
+- 5x5 board. One team aiming "up" and the other aiming "down"
+
+- directionality matters. Many pieces asymmetric behavior vertically.
+	
+	- some complexity in correctly managing the side.
+
+=> (starting) TOP side and (starting) BOTTOM side
