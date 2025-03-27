@@ -33,12 +33,16 @@ class board(object):
 
 	def promote(self, square, piece_type, side):
 		if side == side.TOP:
-			pieces = self.top_squares.values()
 			squares = self.top_squares
 
 		elif side == side.BOTTOM:
-			pieces = self.bottom_squares.value()
 			squares = self.bottom_squares
+
+		if square in squares:
+			squares[square].promote(piece_type)
+
+		else:
+			raise Exception(str(side) + " does not have a piece at " + str(square))
 
 
 	# moves the piece belonging to player of `side` from start_square
@@ -78,15 +82,16 @@ class board(object):
 			comrade_captured_pieces.append(captured_piece)
 			enemy_pieces.pop(end_square)
 
-		promotable = piece.move(end_square)
+		piece.move(end_square)
 		comrade_pieces.pop(start_square)
-
 		comrade_pieces[end_square] = piece
 
-		return promotable
+	def promotion_possible(self, start_square, end_square, side):
+		if side == side.TOP:
+			return start_square[1] == 4 or end_square[1] == 4
 
-
-
+		elif side == side.BOTTOM:
+			return start_square[1] == 0 or end_square[1] == 0
 
 	# returns {square (x, y) => piece } for both players
 	def get_squares(self):
@@ -120,7 +125,6 @@ class board(object):
 	def get_bottom_captured_pieces(self):
 		return self.bottom_captured_pieces
 
-	# 
 	def setup_squares(self, top_pieces, bottom_pieces):
 		self.top_squares = {}
 		self.bottom_squares = {}

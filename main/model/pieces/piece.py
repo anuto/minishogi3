@@ -5,6 +5,7 @@ class piece(object):
 
     def __init__(self, side, square = None):
         self.side = side
+        self.promoted_type = None
 
         if square:
             self.square = square
@@ -36,7 +37,8 @@ class piece(object):
         else:
             raise Exception("invalid side: " + str(self.side))
 
-
+    def promote(self, piece_type):
+        self.promoted_type = piece_type
 
     def is_valid_move(self, new_square):
         return new_square in self.get_moves()
@@ -48,7 +50,10 @@ class piece(object):
         raise Exception("[error] default promotions not overridden")
 
     def get_piece_type(self):
-        return self.PIECE_TYPE
+        if self.promoted_type:
+            return self.promoted_type
+        else:
+            return self.PIECE_TYPE
 
     def get_square(self):
         return self.square
@@ -57,4 +62,4 @@ class piece(object):
         return self.side
 
     def __str__(self):
-        return "[" + str(self.PIECE_TYPE)+ "]"
+        return "[" + str(self.get_piece_type()) + "]"
