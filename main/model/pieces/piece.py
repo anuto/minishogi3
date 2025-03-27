@@ -18,7 +18,25 @@ class piece(object):
             raise Exception("invalid side: " + str(side))
 
     def move(self, new_square):
+        current_square = self.square
         self.square = new_square
+
+        if self.side == side.TOP:
+            if current_square[1] == 4 or new_square[1] == 4:
+                return True
+            else:
+                return False
+
+        elif self.side == side.BOTTOM:
+            if current_square[1] == 0 or new_square[1] == 0:
+                return True
+            else: 
+                return False
+
+        else:
+            raise Exception("invalid side: " + str(self.side))
+
+
 
     def is_valid_move(self, new_square):
         return new_square in self.get_moves()

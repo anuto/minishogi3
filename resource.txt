@@ -17,6 +17,24 @@
 
 - would a linked list handle the potential moveset of rooks / bishops well?
 
+- promotions:
+
+	- promotion is tricky. There are 2 ways someone could end up in a promotion zone:
+
+	1. movement
+	2. placement
+
+	- promotion isn't available on PLACEMENT. so we need:
+
+		- insta-promotion case, movement
+		- a check to see if we want to promote a piece on the next turn...does it require movement?
+
+	- promotion isn't self-evident because pawns -> SG / GG are not differentiable from the innate ones. And the promotion is reverted on capture. so it MUST be a property of the class.
+
+ -----------
+| Resources |
+ -----------
+
 https://en.wikipedia.org/wiki/Minishogi
 
 https://www.pychess.org/variants/minishogi

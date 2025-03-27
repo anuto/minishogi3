@@ -13,10 +13,10 @@ class board(object):
 
 	def __init__(self):
 
-		self.top_pieces = self.setup_pieces(side.TOP)
-		self.bottom_pieces = self.setup_pieces(side.BOTTOM)
+		top_pieces = self.setup_pieces(side.TOP)
+		bottom_pieces = self.setup_pieces(side.BOTTOM)
 
-		self.setup_squares()
+		self.setup_squares(top_pieces, bottom_pieces)
 
 		self.top_captured_pieces = []
 		self.bottom_captured_pieces = []
@@ -31,6 +31,19 @@ class board(object):
 			pawn(side)
 		]
 
+	def promote(self, square, piece_type, side):
+		if side == side.TOP:
+			pieces = self.top_squares.values()
+			squares = self.top_squares
+
+		elif side == side.BOTTOM:
+			pieces = self.bottom_squares.value()
+			squares = self.bottom_squares
+
+
+	# moves the piece belonging to player of `side` from start_square
+	# to end_square if valid. 
+	# returns where the moved piece can be promoted or not
 	def move_piece(self, start_square, end_square, side):
 		if side == side.TOP:
 			comrade_pieces = self.top_squares
@@ -44,9 +57,6 @@ class board(object):
 
 		else:
 			raise Exception("piece side unknown")
-
-		print(side)
-		print(comrade_pieces)
 
 		# invalid piece
 		if start_square not in comrade_pieces:
@@ -68,10 +78,14 @@ class board(object):
 			comrade_captured_pieces.append(captured_piece)
 			enemy_pieces.pop(end_square)
 
-		piece.move(end_square)
-
+		promotable = piece.move(end_square)
 		comrade_pieces.pop(start_square)
+
 		comrade_pieces[end_square] = piece
+
+		return promotable
+
+
 
 
 	# returns {square (x, y) => piece } for both players
@@ -88,15 +102,15 @@ class board(object):
 
 	# returns pieces belonging to top player as []
 	def get_top_pieces(self):
-		return self.top_pieces
+		return list(self.top_squares.values())
 
 	# returns pieces belonging to bot player as []
 	def get_bottom_pieces(self):
-		return self.bottom_pieces
+		return list(self.bottom_squares.values())
 
 	# returns pieces belonging to either players as []
 	def get_pieces(self):
-		return self.top_pieces + self.bottom_pieces
+		return self.get_top_pieces() + self.get_bottom_pieces()
 
 	# returns pieces captured by top player as []
 	def get_top_captured_pieces(self):
@@ -107,18 +121,15 @@ class board(object):
 		return self.bottom_captured_pieces
 
 	# 
-	def setup_squares(self):
+	def setup_squares(self, top_pieces, bottom_pieces):
 		self.top_squares = {}
 		self.bottom_squares = {}
-		self.squares = {}
 
-		for piece in self.top_pieces:
+		for piece in top_pieces:
 			square = piece.get_square()
 			self.top_squares[square] = piece
-			self.squares[square] = piece
 
-		for piece in self.bottom_pieces:
+		for piece in bottom_pieces:
 			square = piece.get_square()
 			self.bottom_squares[square] = piece
-			self.squares[square] = piece
 

@@ -33,7 +33,13 @@ def main():
 
 	print_board_state(game)
 
-	game.move_piece((0, 1), (0, 0), side.BOTTOM)
+	promotable = game.move_piece((0, 1), (0, 0), side.BOTTOM)
+
+	if (promotable):
+		promotion = prompt_promotion(game, (0, 0))
+		# game.promote((0, 0), piece_type, side.BOTTOM)
+
+	print_board_state(game)
 
 if __name__ == '__main__':
 	main()

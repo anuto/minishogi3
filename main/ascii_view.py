@@ -74,3 +74,30 @@ def print_bottom_captured_pieces(game):
 	for piece in bottom_captured_pieces:
 		print(str(piece), ', ')
 	print()
+
+def prompt_promotion(game, square):
+	piece = game.get_piece(square)
+
+	if piece:
+		promotions = piece.get_promotions()
+	else:
+		raise Exception("no piece on " + str(square))
+
+	answer = -1
+
+	while answer < 1 or answer > len(promotions):
+
+		print(str(piece) + " can be promoted! Choose from the following: ", "")
+		for i in range(0, len(promotions)):
+			print(str(i + 1) + ": " + str(promotions[i]))
+
+		response = input()
+		if response.isdigit():
+			answer = int(response)
+
+	return promotions[answer - 1]
+
+
+
+
+
