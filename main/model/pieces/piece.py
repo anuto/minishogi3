@@ -29,4 +29,4 @@ class piece(object):
         return self.side
 
     def __str__(self):
-        return "[" + str(self.PIECE_TYPE) + ", " + str(self.side) + "," + str(self.square) + "]"
+        return "[" + str(self.PIECE_TYPE)+ "]"

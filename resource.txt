@@ -16,3 +16,9 @@
 - ideally, validation logic is kept in the `board` model and not the individual pieces. cleaner and easier to run custom boards. however, this leads to a real issue with infinite path pieces that are constraied only by the spaces available to them.
 
 - would a linked list handle the potential moveset of rooks / bishops well?
+
+https://en.wikipedia.org/wiki/Minishogi
+
+https://www.pychess.org/variants/minishogi
+
+https://www.chessvariants.com/shogi.html
