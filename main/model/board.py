@@ -79,6 +79,8 @@ class board(object):
 		# capture
 		if end_square in enemy_pieces:
 			captured_piece = enemy_pieces[end_square]
+			
+			captured_piece.set_captured()
 			comrade_captured_pieces.append(captured_piece)
 			enemy_pieces.pop(end_square)
 
@@ -88,9 +90,22 @@ class board(object):
 
 	def promotion_possible(self, start_square, end_square, side):
 		if side == side.TOP:
-			return start_square[1] == 4 or end_square[1] == 4
+			pieces = self.get_top_squares()
 
 		elif side == side.BOTTOM:
+			pieces = self.get_bottom_squares()
+
+		else:
+			raise Exception("[error] unrecognized side: " + side)
+		piece = pieces[end_square]
+		promotions = piece.get_promotions()
+		if not promotions:
+			return False
+
+		if side == side.TOP:
+			return start_square[1] == 4 or end_square[1] == 4
+
+		else:
 			return start_square[1] == 0 or end_square[1] == 0
 
 	# returns {square (x, y) => piece } for both players

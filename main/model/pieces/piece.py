@@ -3,14 +3,11 @@ from .move_utils import *
 
 class piece(object):
 
-    def __init__(self, side, square = None):
+    def __init__(self, side):
         self.side = side
         self.promoted_type = None
 
-        if square:
-            self.square = square
-
-        elif side == side.TOP:
+        if side == side.TOP:
             self.square = self.TOP_START_SQUARE
 
         elif side == side.BOTTOM:
@@ -22,20 +19,15 @@ class piece(object):
         current_square = self.square
         self.square = new_square
 
+    def set_captured(self):
+        self.promoted_type = None
+        self.change_side()
+
+    def change_side(self):
         if self.side == side.TOP:
-            if current_square[1] == 4 or new_square[1] == 4:
-                return True
-            else:
-                return False
-
+            self.side = side.BOTTOM
         elif self.side == side.BOTTOM:
-            if current_square[1] == 0 or new_square[1] == 0:
-                return True
-            else: 
-                return False
-
-        else:
-            raise Exception("invalid side: " + str(self.side))
+            self.side = side.TOP
 
     def promote(self, piece_type):
         self.promoted_type = piece_type
@@ -55,11 +47,12 @@ class piece(object):
         else:
             return self.PIECE_TYPE
 
-    def get_square(self):
-        return self.square
-
+    # really necessary due to asymmetry of movement against a static board
     def get_side(self):
         return self.side
+        
+    def get_square(self):
+        return self.square
 
     def __str__(self):
         return "[" + str(self.get_piece_type()) + "]"

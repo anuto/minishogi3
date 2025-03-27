@@ -1,4 +1,5 @@
 from .piece import *
+from .dragon_king import *
 from .piece_type import *
 
 class rook(piece):
@@ -9,9 +10,15 @@ class rook(piece):
 	PIECE_TYPE = piece_type.ROOK
 
 	def get_moves(self):
-		return move_orthogonally(self.square)
+		if self.promoted_type:
+			return dragon_king.get_moves()
+		else:
+			return move_orthogonally(self.square)
 
 	def get_promotions(self):
-		return [piece_type.DRAGON_KING, piece_type.ROOK]
+		if self.promoted_type:
+			return dragon_king.get_promotions()
+		else:
+			return [piece_type.DRAGON_KING, piece_type.ROOK]
 
 

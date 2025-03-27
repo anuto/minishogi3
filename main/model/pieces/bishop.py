@@ -1,4 +1,5 @@
 from .piece import *
+from .dragon_horse import *
 from .piece_type import *
 
 class bishop(piece):
@@ -9,9 +10,15 @@ class bishop(piece):
 	PIECE_TYPE = piece_type.BISHOP
 
 	def get_moves(self):
-		return move_diagonally(self.square)
+		if self.promoted_type:
+			return dragon_horse.get_moves()
+		else:
+			return move_diagonally(self.square)
 
 	def get_promotions(self):
-		return [piece_type.DRAGON_HORSE, piece_type.BISHOP]
+		if self.promoted_type:
+			return dragon_horse.get_promotions()
+		else:
+			return [piece_type.DRAGON_HORSE, piece_type.BISHOP]
 
 
