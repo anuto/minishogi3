@@ -1,9 +1,13 @@
-from .side import Side
+from .side import *
 from .move_utils import *
 
+# removes Nones
 def valid_moves(moves):
 	return [move for move in moves if move is not None]
 
+# within board boundaries. 
+# ideally board logic, but necessary evil to cap search space for infinite
+# movement pieces like rook / bishop
 def is_valid(square):
 	return square[0] >= 0 and \
 		square[0] <= 4 and \
@@ -11,14 +15,15 @@ def is_valid(square):
 		square[1] <= 4
 
 def move(top_square, bottom_square, side):
-	if side == Side.TOP:
+	if side == side.TOP:
 		move = top_square
 
-	elif side == Side.BOTTOM:
+	elif side == side.BOTTOM:
 		move = bottom_square
 
 	if is_valid(move):
 		return move
+
 	else:
 		return None
 

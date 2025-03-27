@@ -9,11 +9,13 @@ class piece(object):
         if square:
             self.square = square
 
-        elif side == Side.TOP:
+        elif side == side.TOP:
             self.square = self.TOP_START_SQUARE
 
-        else: # bottom side
+        elif side == side.BOTTOM:
             self.square = self.BOTTOM_START_SQUARE
+        else:
+            raise Exception("invalid side: " + str(side))
 
     def move(self, new_square):
         self.square = new_square
@@ -22,10 +24,13 @@ class piece(object):
         return new_square in self.get_moves()
 
     def get_moves(self):
-        return ["[error] default piece behavior not overridden"]
+        raise Exception("[error] default piece behavior not overridden")
 
     def get_promotions(self):
-        return ["[error] default promotions not overridden"]
+        raise Exception("[error] default promotions not overridden")
+
+    def get_piece_type(self):
+        return self.PIECE_TYPE
 
     def get_square(self):
         return self.square

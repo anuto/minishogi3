@@ -12,6 +12,6 @@ class rook(piece):
 		return move_orthogonally(self.square)
 
 	def get_promotions(self):
-		return [piece_type.DRAGON_KING]
+		return [piece_type.DRAGON_KING, piece_type.ROOK]
 
 

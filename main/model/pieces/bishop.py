@@ -12,6 +12,6 @@ class bishop(piece):
 		return move_diagonally(self.square)
 
 	def get_promotions(self):
-		return [piece_type.DRAGON_HORSE]
+		return [piece_type.DRAGON_HORSE, piece_type.BISHOP]
 
 

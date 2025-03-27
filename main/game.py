@@ -1,15 +1,39 @@
 from game_controller import *
 from ascii_view import *
+from model.pieces.side import *
+from model.pieces.piece_type import *
 
 def main():
 
 	game = game_controller()
 	
-	print_initial_state(game)
+	print_full_state(game)
 
-	game.move_piece((0, 3), (0, 2))
+	game.move_piece((0, 3), (0, 2), side.BOTTOM)
 
-	draw_board(game)
+	print_board_state(game)
+
+	game.move_piece((4, 1), (4, 2), side.TOP)
+
+	print_board_state(game)
+
+	game.move_piece((4, 4), (4, 2), side.BOTTOM)
+
+	print_board_state(game)
+
+	game.move_piece((3, 0), (4, 1), side.TOP)
+
+	print_board_state(game)
+
+	game.move_piece((0, 2), (0, 1), side.BOTTOM)
+
+	print_board_state(game)
+
+	game.move_piece((4, 1), (4, 2), side.TOP)
+
+	print_board_state(game)
+
+	game.move_piece((0, 1), (0, 0), side.BOTTOM)
 
 if __name__ == '__main__':
 	main()

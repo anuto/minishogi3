@@ -19,4 +19,4 @@ class silver_general(piece):
 
 
 	def get_promotions(self):
-		return [piece_type.GOLD_GENERAL]
+		return [piece_type.GOLD_GENERAL, piece_type.SILVER_GENERAL]

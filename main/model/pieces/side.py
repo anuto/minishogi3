@@ -1,6 +1,6 @@
 from enum import Enum
 
-class Side(Enum):
+class side(Enum):
 
     TOP = "TOP"
     BOTTOM = "BOTTOM"
