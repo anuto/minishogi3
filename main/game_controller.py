@@ -6,15 +6,23 @@ class game_controller(object):
 
 	def __init__(self):
 		self.board = board()
+		self.winner = None
 
 	def is_game_over(self):
-		pieces = self.board.get_pieces()
+		top_captured_pieces = self.board.get_top_captured_pieces()
+		bottom_captured_pieces = self.board.get_bottom_captured_pieces() 
 
-		for piece in pieces:
+		for piece in top_captured_pieces:
 			if piece.get_piece_type() == piece_type.KING:
-				return False
+				self.winner = side.TOP
+				return True
 
-		return True
+		for piece in bottom_captured_pieces:
+			if piece.get_piece_type() == piece_type.KING:
+				self.winner = side.BOTTOM
+				return True
+
+		return False
 
 	def promotion_possible(self, start_square, end_square, side):
 		return self.board.promotion_possible(start_square, end_square, side)
