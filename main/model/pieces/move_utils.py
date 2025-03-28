@@ -22,7 +22,7 @@ def move(top_square, bottom_square, side):
 		move = bottom_square
 
 	if is_valid(move):
-		return move
+		return [move]
 
 	else:
 		return None
@@ -67,64 +67,93 @@ def move_backward_right(square, side):
 	bottom_square = (square[0] + 1, square[1] + 1)
 	return move(top_square, bottom_square, side)
 
+# returns [] of moves lists as [] in each direction
+# ex. [[(left), (left)], [(bottom)]]
 def move_orthogonally(square):
 	moves = []
 
 	# left
-	for x in range(0, square[0]):
-		moves.append((x, square[1]))
+	left = []
+	for x in range(square[0] - 1,-1, -1):
+		left.append((x, square[1]))
+
+	moves.append(left)
 
 	# right
+	right = []
 	for x in range(square[0] + 1, 5):
-		moves.append((x, square[1]))
+		right.append((x, square[1]))
+
+	moves.append(right)
 
 	# up
-	for y in range(0, square[1]):
-		moves.append((square[0], y))
+	up = []
+	for y in range(square[1] - 1, -1, -1):
+		up.append((square[0], y))
+
+	moves.append(up)
 
 	# down
+	down = []
 	for y in range(square[1] + 1, 5):
-		moves.append((square[0], y))
+		down.append((square[0], y))
+	down.append(down)
 
 	return moves
 
+# returns [] of moves lists as [] in each direction
+# ex. [[(upper left 1), (upper left 2)], [(bottom right)]]
 def move_diagonally(square):
 	moves = []
+
 
 	# upper left
 	x = square[0] - 1
 	y = square[1] - 1
+	upper_left = []
 
 	while (x >= 0 and y >= 0):
-		moves.append((x, y))
+		upper_left.append((x, y))
 		x -= 1
 		y -= 1
+
+	moves.append(upper_left)
 
 	# upper right
 	x = square[0] + 1
 	y = square[1] - 1
+	upper_right = []
 
 	while (x <= 4 and y >= 0):
-		moves.append((x, y))
+		upper_right.append((x, y))
 		x += 1
 		y -= 1
+
+	moves.append(upper_right)
 
 	# bottom left
 	x = square[0] - 1
 	y = square[1] + 1
 
+	bottom_left = []
+
 	while (x >= 0 and y <= 4):
-		moves.append((x, y))
+		bottom_left.append((x, y))
 		x -= 1
 		y += 1
+
+	moves.append(bottom_left)
 
 	# bottom right
 	x = square[0] + 1
 	y = square[1] + 1
 
+	bottom_right = []
+
 	while (x <= 4 and y <= 4):
-		moves.append((x, y))
+		bottom_right.append((x, y))
 		x += 1
 		y += 1
 
+	moves.append(bottom_right)
 	return moves

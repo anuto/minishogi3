@@ -31,6 +31,97 @@
 
 	- promotion isn't self-evident because pawns -> SG / GG are not differentiable from the innate ones. And the promotion is reverted on capture. so it MUST be a property of the class.
 
+- placement:
+
+	- placement is tricky...ish. handled the "what if they departed the square" promotion in `move()`, so shouldn't have to handle any promotion here since it doesn't take effect on the turn it is placed.
+
+	- lots of edge cases on what can be placed where, some of which depends on a larger awareness of the board. the legality of the placement cannot be solely determined by a piece since it requires board context.
+
+	1. empty square
+
+	2. no pawn drop checkmate
+	3. no pawn drop if you have another pawn on the same file
+	4. pawns cannot be dropped in the last row
+
+	#2 is the hardest one, since now we need checkmate logic....ugh. if we try to force a version where you take the king or eliminate this rule it easier. but we can try.
+
+	evaluating checkmate is hard for 2 reasons:
+
+	- drops - we need to know if the opponent can block the attack
+
+	and then like normal chess:
+
+	- if the attacking piece can be captured or blocked normally, or if the king has a safe square
+
+	that means we need to check:
+
+	- distance between dropped piece AND if the opponent has any captured pieces
+
+	- knowing the movements of all the enemy pieces - if they can get to the drop square, or between the king and the dropped piece.
+
+		- this is especially hard. we have no cached information about piece movement...should we store it? recompute every time we place a drop?
+
+	- knowing if all the squares around the king are occupied, safe, or dangerous
+
+	@.@
+
+	- yeah ok. dynamic processing it is. complex though:
+
+		- initializing currently is {(square) => <piece>}
+		- we need a mapping of {<piece> => [moves]} as well as 
+		  <captured pieces> => [possible placements]
+
+	
+		- there is a complexity in dependent movement - let's say a rook is on (2, 0) and there is a piece on (1, 0). How do we encode no (0, 0)?
+
+			- as mentioned above, a linkedlist is suitable. but this complicated the struct non-insignificantly. For now, we try to model things as moves [] of (squares). 
+
+			- we could instead deal with it in terms of directions that can be gone, with the length in that direction handles as a list? it is...kinda convoluted. but not too bad?
+
+		- so moves will look not like this [(0, 1), (0, 2), (1,0)]
+		 => [[(0, 1), (0, 2)], [(1,0)]]
+
+		 list[list[(move)]]
+
+		- there's a real issue with how im trying to handle things rn. pieces dont have knowledge about the larger board...
+
+		- there is a bit of a challenge in...checking move validity
+			- current: piece handling. but that doesn't include board logic
+			- to avoid this, board needs to do the check with legal moves against what is there. like how we initialize the pieces
+
+			- currently we have a mapping of piece -> moves. but this will have a problem later, because pieces aren't unique if you capture and drop one. the only thing that is unique is what is on each square. so.
+
+			the mapping *should* be square -> moves
+
+			we also have square -> piece
+
+			should we have square -> (piece, moves)?. This is less maintenance, but the logic is better separated w 'pieces', 'moves'
+
+				- initialization crazy hard to run them at the same time too. or at least redundant. because we use the top/bottom squares {} keys to find collisions when finding valid moves
+
+				=> keep it separate?
+
+		- ugh, another problem. I have to recompute EVERY pieces moves with the current system, because if another piece moves OUT of their way, it will already have been filtered out.
+
+			- so maybe i DO want a store of ALL LEGAL moves...and then use realtime logic to rule OUT the ones that are illegal because of board constraints...?
+
+			- probably still good to store the valid moves...?
+
+				- without board logic this really is easily handled by piece level logic...
+
+				- our restructure to capture DIRECTION as a [] of moves in that direction does seem...better? maybe?
+
+		- ok, important to note that the logic for avoiding move recomputation is tricky. found a case where rook at (0,0) is in trouble because it isn't showing up in computed moves on initialization. b/c ofc it isn't. it has no possible moves!
+
+		now, ideally we have...
+
+		ok, maybe the answer can be we put in pieces even w no valid moves...? probably the easier. piece -> []
+
+		in this way, we won't have an issue
+
+
+TODO: repetition rule @.@
+
  -----------
 | Resources |
  -----------

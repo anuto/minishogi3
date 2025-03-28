@@ -26,14 +26,23 @@ class piece(object):
     def change_side(self):
         if self.side == side.TOP:
             self.side = side.BOTTOM
+
         elif self.side == side.BOTTOM:
             self.side = side.TOP
 
     def promote(self, piece_type):
         self.promoted_type = piece_type
 
-    def is_valid_move(self, new_square):
-        return new_square in self.get_moves()
+    # this just means valid in terms of the piece, not in the context of the board.
+    def can_move_to(self, new_square):
+        directions = self.get_moves()
+
+        for direction in directions:
+            for move in direction:
+                if new_square == move:
+                    return True
+
+        return False
 
     def get_moves(self):
         raise Exception("[error] default piece behavior not overridden")

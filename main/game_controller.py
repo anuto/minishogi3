@@ -9,6 +9,9 @@ class game_controller(object):
 		self.winner = None
 
 	def is_game_over(self):
+		if self.winner:
+			return True
+
 		top_captured_pieces = self.board.get_top_captured_pieces()
 		bottom_captured_pieces = self.board.get_bottom_captured_pieces() 
 
@@ -33,6 +36,9 @@ class game_controller(object):
 	# returns promotable or not. but shouldn't. fix in a moment TODO
 	def move_piece(self, start_square, end_square, side):
 		return self.board.move_piece(start_square, end_square, side)
+
+	def place_piece(self, square, side):
+		return self.board.place_piece(square, side)
 
 	def get_squares(self):
 		return self.board.get_squares()
