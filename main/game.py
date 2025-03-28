@@ -45,7 +45,7 @@ def main():
 
 	print_board_state(game)
 
-	game.move_piece((0, 4), (0, 3), side.BOTTOM)
+	game.drop_piece((1, 2), piece_type.ROOK, side.BOTTOM)
 
 	print_board_state(game)
 

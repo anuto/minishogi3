@@ -120,6 +120,9 @@
 		in this way, we won't have an issue
 
 
+	- no problem if we have multiples in our captured [], no uniqueness guarantee (unlike board squares). furthermore, nothing distinguishing about them either. irrelevant
+
+
 TODO: repetition rule @.@
 
  -----------

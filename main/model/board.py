@@ -48,6 +48,40 @@ class board(object):
 			raise Exception(str(side) + " does not have a piece at " + str(square))
 
 
+	def drop_piece(self, piece_type, square, side):
+		if square in self.top_squares or square in self.bottom_squares:
+			raise Exception("Cannot drop piece in ocupied square " + str(square))
+
+		if side == side.TOP:
+			pieces = self.top_squares
+			enemy_pieces = self.bottom_squares
+			moves = self.top_moves
+			captured_pieces = self.top_captured_pieces
+
+		elif side == side.BOTTOM:
+			pieces = self.bottom_squares
+			enemy_pieces = self.top_squares
+			moves = self.bottom_moves
+			captured_pieces = self.bottom_captured_pieces
+
+		else:
+			raise Exception("[error] side unknown: " + str(side))
+
+		removed_piece = None
+
+		for captured_piece in captured_pieces:
+			if captured_piece.get_piece_type() == piece_type:
+				captured_pieces.remove(captured_piece)
+				removed_piece = captured_piece
+
+		if not removed_piece:
+			raise Exception("[error] could not find captured piece of type " + str(piece_type))
+
+		removed_piece.drop(square)
+
+		pieces[square] = removed_piece
+		moves[square] = self.get_legal_moves_for_piece(removed_piece, pieces, enemy_pieces)
+
 	# moves the piece belonging to player of `side` from start_square
 	# to end_square if valid. 
 	# returns where the moved piece can be promoted or not
@@ -263,6 +297,3 @@ class board(object):
 				legal_moves_for_piece.append(legal_moves_in_direction)
 
 		return legal_moves_for_piece
-
-
-

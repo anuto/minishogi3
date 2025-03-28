@@ -27,6 +27,9 @@ class game_controller(object):
 
 		return False
 
+	def drop_piece(self, piece_type, square, side):
+		return self.board.drop_piece(square, piece_type, side)
+
 	def promotion_possible(self, start_square, end_square, side):
 		return self.board.promotion_possible(start_square, end_square, side)
 

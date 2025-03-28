@@ -19,9 +19,16 @@ class piece(object):
         current_square = self.square
         self.square = new_square
 
+    def drop(self, square):
+        if self.square:
+            raise Exception("[error] piece is already on the board?")
+
+        self.square = square
+
     def set_captured(self):
         self.promoted_type = None
         self.change_side()
+        self.square = None
 
     def change_side(self):
         if self.side == side.TOP:
