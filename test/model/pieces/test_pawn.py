@@ -17,7 +17,7 @@ class TestPawn():
         promotions = test_pawn.get_promotions()
         expected_promotions = [piece_type.SILVER_GENERAL, piece_type.GOLD_GENERAL]
 
-        self.assert_contains_equal(promotions, expected_promotions)
+        utils.assert_contains_equal(promotions, expected_promotions)
         assert test_pawn.can_move_to((4,2))
 
         all_squares = utils.get_all_squares()
@@ -25,7 +25,7 @@ class TestPawn():
         # the one square it should be able to go to...
         all_squares.remove((4, 2))
 
-        self.validate_cannot_move_to_squares(test_pawn, all_squares)
+        utils.validate_cannot_move_to_squares(test_pawn, all_squares)
 
         assert not test_pawn.is_captured()
 
@@ -49,7 +49,7 @@ class TestPawn():
         # the one square it should be able to go to...
         all_squares.remove((0, 2))
 
-        self.validate_cannot_move_to_squares(test_pawn, all_squares)
+        utils.validate_cannot_move_to_squares(test_pawn, all_squares)
 
         assert not test_pawn.is_captured()
 
@@ -125,7 +125,7 @@ class TestPawn():
         assert not test_pawn.get_square()
         assert test_pawn.get_piece_type() == piece_type.PAWN
 
-    def test_promote_top_pawn_to_silver_general(self):
+    def test_promote_top_pawn_to_silver_general(self, utils):
         test_pawn = pawn(side.TOP)
 
         test_pawn.promote(piece_type.SILVER_GENERAL)
@@ -134,52 +134,208 @@ class TestPawn():
         assert test_pawn.get_piece_type() != piece_type.PAWN
         assert test_pawn.get_piece_type() != piece_type.GOLD_GENERAL
 
-        expected_moves = []
+        expected_moves = [[(4, 2)], [(3, 2)], [(3, 0)]]
+        utils.assert_contains_equal(expected_moves, test_pawn.get_moves())
 
-    def test_promote_bottom_pawn_to_silver_general(self):
-        pass
+        test_pawn.move((3, 2))
 
-    def test_promote_top_pawn_to_gold_general(self):
-        pass
+        assert test_pawn.get_square() == (3, 2)
+        expected_moves = [[(2, 3)], [(3, 3)], [(4, 3)], [(2, 1)], [(4, 1)]]
+        utils.assert_contains_equal(expected_moves, test_pawn.get_moves())
 
-    def test_promote_bottom_pawn_to_gold_general(self):
-        pass
+    def test_promote_bottom_pawn_to_silver_general(self, utils):
+        test_pawn = pawn(side.BOTTOM)
 
-    def test_promote_top_pawn_to_silver_general_to_gold_general(self):
-        pass
+        test_pawn.promote(piece_type.SILVER_GENERAL)
 
-    def test_promote_bottom_pawn_to_silver_general_to_gold_general(self):
-        pass
+        assert test_pawn.get_piece_type() == piece_type.SILVER_GENERAL
+        assert test_pawn.get_piece_type() != piece_type.PAWN
+        assert test_pawn.get_piece_type() != piece_type.GOLD_GENERAL
+
+        expected_moves = [[(1, 4)], [(0, 2)], [(1, 2)]] 
+        utils.assert_contains_equal(expected_moves, test_pawn.get_moves())
+
+        test_pawn.move((1, 2))
+
+        assert test_pawn.get_square() == (1, 2)
+        expected_moves = [[(0, 1)], [(1, 1)], [(2, 1)], [(0, 3)], [(2, 3)]]  
+        utils.assert_contains_equal(expected_moves, test_pawn.get_moves())
+
+    def test_promote_top_pawn_to_gold_general(self, utils):
+        test_pawn = pawn(side.TOP)
+
+        test_pawn.promote(piece_type.GOLD_GENERAL)
+
+        assert test_pawn.get_piece_type() == piece_type.GOLD_GENERAL
+        assert test_pawn.get_piece_type() != piece_type.SILVER_GENERAL
+        assert test_pawn.get_piece_type() != piece_type.PAWN
+
+        expected_moves = [[(4, 0)], [(3, 1)], [(3, 2)], [(4, 2)]]
+        utils.assert_contains_equal(expected_moves, test_pawn.get_moves())
+
+        test_pawn.move((3, 2))
+
+        assert test_pawn.get_square() == (3, 2)
+        expected_moves = [[(2, 3)], [(3, 3)], [(4, 3)], [(2, 2)], [(4, 2)], [(3, 1)]]
+        utils.assert_contains_equal(expected_moves, test_pawn.get_moves())
+
+    def test_promote_bottom_pawn_to_gold_general(self, utils):
+        test_pawn = pawn(side.BOTTOM)
+
+        test_pawn.promote(piece_type.GOLD_GENERAL)
+
+        assert test_pawn.get_piece_type() == piece_type.GOLD_GENERAL
+        assert test_pawn.get_piece_type() != piece_type.SILVER_GENERAL
+        assert test_pawn.get_piece_type() != piece_type.PAWN
+
+        expected_moves = [[(0, 2)], [(1, 2)], [(1, 3)], [(0, 4)]]
+        utils.assert_contains_equal(expected_moves, test_pawn.get_moves())
+
+        test_pawn.move((1, 2))
+
+        assert test_pawn.get_square() == (1, 2)
+        expected_moves = [[(0, 1)], [(1, 1)], [(2, 1)], [(0, 2)], [(2, 2)], [(1, 3)]]
+        utils.assert_contains_equal(expected_moves, test_pawn.get_moves())
+    
+    def test_promote_top_pawn_to_silver_general_to_gold_general(self, utils):
+        test_pawn = pawn(side.BOTTOM)
+
+        test_pawn.promote(piece_type.SILVER_GENERAL)
+        test_pawn.promote(piece_type.GOLD_GENERAL)
+
+        assert test_pawn.get_piece_type() == piece_type.GOLD_GENERAL
+        assert test_pawn.get_piece_type() != piece_type.SILVER_GENERAL
+        assert test_pawn.get_piece_type() != piece_type.PAWN
+
+        expected_moves = [[(0, 2)], [(1, 2)], [(1, 3)], [(0, 4)]]
+        utils.assert_contains_equal(expected_moves, test_pawn.get_moves())
+
+        test_pawn.move((1, 2))
+
+        assert test_pawn.get_square() == (1, 2)
+        expected_moves = [[(0, 1)], [(1, 1)], [(2, 1)], [(0, 2)], [(2, 2)], [(1, 3)]]
+    def test_promote_bottom_pawn_to_silver_general_to_gold_general(self, utils):
+        test_pawn = pawn(side.BOTTOM)
+
+        test_pawn.promote(piece_type.SILVER_GENERAL)
+        test_pawn.promote(piece_type.GOLD_GENERAL)
+
+        assert test_pawn.get_piece_type() == piece_type.GOLD_GENERAL
+        assert test_pawn.get_piece_type() != piece_type.SILVER_GENERAL
+        assert test_pawn.get_piece_type() != piece_type.PAWN
+
+        expected_moves = [[(0, 2)], [(1, 2)], [(1, 3)], [(0, 4)]]
+        utils.assert_contains_equal(expected_moves, test_pawn.get_moves())
+
+        test_pawn.move((1, 2))
+
+        assert test_pawn.get_square() == (1, 2)
+        expected_moves = [[(0, 1)], [(1, 1)], [(2, 1)], [(0, 2)], [(2, 2)], [(1, 3)]]
+        utils.assert_contains_equal(expected_moves, test_pawn.get_moves())
 
     def test_top_gold_general_captured(self):
-        pass
+        test_pawn = pawn(side.TOP)
+
+        test_pawn.promote(piece_type.GOLD_GENERAL)
+        test_pawn.set_captured()
+
+        assert not test_pawn.get_square()
+        assert test_pawn.get_piece_type() == piece_type.PAWN
+        assert test_pawn.get_side() == side.BOTTOM
 
     def test_bottom_gold_general_captured(self):
-        pass
+        test_pawn = pawn(side.BOTTOM)
+
+        test_pawn.promote(piece_type.GOLD_GENERAL)
+        test_pawn.set_captured()
+
+        assert not test_pawn.get_square()
+        assert test_pawn.get_piece_type() == piece_type.PAWN
+        assert test_pawn.get_side() == side.TOP
 
     def test_top_silver_general_captured(self):
-        pass
+        test_pawn = pawn(side.TOP)
+
+        test_pawn.promote(piece_type.SILVER_GENERAL)
+        test_pawn.set_captured()
+
+        assert not test_pawn.get_square()
+        assert test_pawn.get_piece_type() == piece_type.PAWN
+        assert test_pawn.get_side() == side.BOTTOM
 
     def test_bottom_silver_general_captured(self):
-        pass
+        test_pawn = pawn(side.BOTTOM)
+
+        test_pawn.promote(piece_type.SILVER_GENERAL)
+        test_pawn.set_captured()
+
+        assert not test_pawn.get_square()
+        assert test_pawn.get_piece_type() == piece_type.PAWN
+        assert test_pawn.get_side() == side.TOP
 
     def test_double_promoted_top_gold_general_captured(self):
-        pass
+        test_pawn = pawn(side.TOP)
+
+        test_pawn.promote(piece_type.SILVER_GENERAL)
+        test_pawn.promote(piece_type.GOLD_GENERAL)
+
+        test_pawn.set_captured()
+
+        assert not test_pawn.get_square()
+        assert test_pawn.get_piece_type() == piece_type.PAWN
+        assert test_pawn.get_side() == side.BOTTOM
 
     def test_double_promoted_bottom_gold_general_captured(self):
-        pass
+        test_pawn = pawn(side.BOTTOM)
 
-    def test_drop_pawn(self):
-        pass
+        test_pawn.promote(piece_type.SILVER_GENERAL)
+        test_pawn.promote(piece_type.GOLD_GENERAL)
 
+        test_pawn.set_captured()
 
-    # ~ helpers ~
-    def assert_contains_equal(self, collection_1, collection_2):
-        assert collections.Counter(collection_1) == collections.Counter(collection_2)
+        assert not test_pawn.get_square()
+        assert test_pawn.get_piece_type() == piece_type.PAWN
+        assert test_pawn.get_side() == side.TOP
 
-    def validate_cannot_move_to_squares(self, test_pawn, squares):
-        for square in squares:
-            assert not test_pawn.can_move_to(square)
+    def test_drop_top_pawn_basic(self):
+        test_pawn = pawn(side.TOP)
+
+        test_pawn.set_captured()
+        test_pawn.drop((2, 2))
+
+        assert test_pawn.get_square() == (2, 2)
+        assert test_pawn.get_side() == side.BOTTOM
+
+    def test_drop_bottom_pawn_basic(self):
+        test_pawn = pawn(side.BOTTOM)
+
+        test_pawn.set_captured()
+        test_pawn.drop((2, 2))
+
+        assert test_pawn.get_square() == (2, 2)
+        assert test_pawn.get_side() == side.TOP
+
+    def test_top_drop_captured_promoted_gold_general(self):
+        test_pawn = pawn(side.BOTTOM)
+
+        test_pawn.promote(piece_type.GOLD_GENERAL)
+        test_pawn.set_captured()
+        test_pawn.drop((2, 2))
+
+        assert test_pawn.get_square() == (2, 2)
+        assert test_pawn.get_side() == side.TOP
+        assert test_pawn.get_piece_type() == piece_type.PAWN
+
+    def test_bottom_drop_captured_promoted_gold_general(self):
+        test_pawn = pawn(side.TOP)
+
+        test_pawn.promote(piece_type.GOLD_GENERAL)
+        test_pawn.set_captured()
+        test_pawn.drop((2, 2))
+
+        assert test_pawn.get_square() == (2, 2)
+        assert test_pawn.get_side() == side.BOTTOM
+        assert test_pawn.get_piece_type() == piece_type.PAWN
 
 if __name__ == '__main__':
     unittest.main()

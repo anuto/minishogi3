@@ -23,3 +23,11 @@ class piece_type(Enum):
 
     def __str__(self):
         return self.value
+
+    def __lt__(self, other):
+        if self.__class__ == other.__class__:
+            return self.value < other.value
+
+    def __gt__(self, other):
+        if self.__class__ == other.__class__:
+            return self.value > other.value
