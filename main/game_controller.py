@@ -28,7 +28,7 @@ class game_controller(object):
 		return False
 
 	def drop_piece(self, piece_type, square, side):
-		return self.board.drop_piece(square, piece_type, side)
+		return self.board.drop_piece(piece_type, square, side)
 
 	def promotion_possible(self, start_square, end_square, side):
 		return self.board.promotion_possible(start_square, end_square, side)
@@ -39,9 +39,6 @@ class game_controller(object):
 	# returns promotable or not. but shouldn't. fix in a moment TODO
 	def move_piece(self, start_square, end_square, side):
 		return self.board.move_piece(start_square, end_square, side)
-
-	def place_piece(self, square, side):
-		return self.board.place_piece(square, side)
 
 	def get_squares(self):
 		return self.board.get_squares()

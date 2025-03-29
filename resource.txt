@@ -1,3 +1,4 @@
+
  0 1 2 3 4 
 0
 1
@@ -122,8 +123,19 @@
 
 	- no problem if we have multiples in our captured [], no uniqueness guarantee (unlike board squares). furthermore, nothing distinguishing about them either. irrelevant
 
+ROAD MAP:
 
-TODO: repetition rule @.@
+- promotion rules
+	- is_checkmate
+
+- show available moves
+
+- repetition rule
+
+- flesh out text client 
+
+- test suite
+	- rigorous testing
 
  -----------
 | Resources |

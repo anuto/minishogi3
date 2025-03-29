@@ -92,10 +92,10 @@ class board(object):
 
 		self.update_board(None, square, side)
 
-	def validate_legal_pawn_drop(self, square, squares, side):
-		self.validate_not_last_row(square, side)
-		self.validate_no_other_pawn_same_file(squares, square)
-		self.validate_not_pawn_checkmate()
+	def validate_legal_pawn_drop(self, drop_square, squares, side):
+		self.validate_not_last_row(drop_square, side)
+		self.validate_no_other_pawn_same_file(squares, drop_square)
+		self.validate_not_pawn_checkmate(side, drop_square)
 
 	# may need to implement differently unfortunately here and for a generic
 	# is_checkmate. Because this encodes a pawn down, whereas the generic is a
@@ -103,29 +103,65 @@ class board(object):
 
 	# they can probably share code though, similar in concept.
 	def validate_not_pawn_checkmate(self, side, drop_square):
-		enemy_side = get_enemy_side(side)
+		enemy_side = self.get_enemy_side(side)
 
 		# is it blockable? freebie. checkmate by pawn drop can never be 
 		# blocked since it only attacks directly in front
 
-		# can the attacker be captured?
-		drop_square_protected = self.side_threatens_square(enemy_side, drop_square)
+		# can the attacker be captured? 
+
+		# ! a problem. if it is just the king, then we need to make sure the escape
+		# pieces are also not defended..... sigh.
+		defending_pieces = self.pieces_threatening_square(enemy_side, drop_square)
+
+		if defending_pieces:
+			if len(defending_pieces) > 1:
+				return
+
+			lone_defender_type =  defending_pieces[0].get_piece_type()
+			if lone_defender_type != piece_type.KING:
+				return
+
+			else:
+				drop_square_defended = self.pieces_threatening_square(side, drop_square)
+				if not drop_square_defended:
+					return
 
 		# can the king move?
-		king_moves = self.moves_for_piece(squares, comrade_moves, piece_type.KING)
+		king_moves = self.moves_for_piece(self.get_squares_by_side(enemy_side), self.get_moves_by_side(enemy_side), piece_type.KING)
 
 		# need to know if those spots are also threatened. pawn drop won't attack
 		# any other squares but the current one. ie can't check the king and threaten
 		# another
 		for king_move in king_moves:
-			if not side_threatens_square(enemy_side, drop_square) \
+			if not self.pieces_threatening_square(side, king_move) \
 					and king_move != drop_square:
-				return True
 
-		return False
+				return
 
+		raise Exception("pawns cannot drop checkmate! class uprising time.")
+
+	def get_moves_by_side(self, side):
+		if side == side.TOP:
+			return self.top_moves
+
+		elif side == side.BOTTOM:
+			return self.bottom_moves
+
+		else:
+			raise Exception("[error] side not recognized: " + str(side))
+
+	def get_squares_by_side(self, side):
+		if side == side.TOP:
+			return self.top_squares
+
+		elif side == side.BOTTOM:
+			return self.bottom_squares
+
+		else:
+			raise Exception("[error] side not recognized: " + str(side))		
 				
-	def get_enemy_side(side):
+	def get_enemy_side(self, side):
 		if side == side.TOP:
 			return side.BOTTOM
 
@@ -135,27 +171,19 @@ class board(object):
 		else:
 			raise Exception("[error] side not recognized: " + str(side))
 
-	def side_threatens_square(self, side, square):
-		if side == side.TOP:
-			squares = self.top_squares
-			comrade_moves = self.top_moves
-			enemy_moves = self.bottom_moves
+	def pieces_threatening_square(self, side, square):
+		moves = self.get_moves_by_side(side)
+		squares = self.get_squares_by_side(side)
 
-		elif side == side.BOTTOM:
-			squares = self.bottom_squares
-			moves = self.bottom_moves
-			enemy_moves = self.top_moves
+		threats = []
 
-		else:
-			raise Exception("[error] side not recognized: " + str(side))
+		for piece in moves:
+			directions = moves[piece]
 
-		for piece in squares:
-			directions = squares[piece]
+			if self.moves_contains_move(directions, square):
+				threats.append(squares[piece])
 
-			if self.moves_contains_move(directions,square):
-				return True
-
-		return False
+		return threats
 
 	# accepts moves as a [[]], a list of moves in a list of different directions
 	# returns if the given move is included
@@ -169,30 +197,34 @@ class board(object):
 
 	def moves_for_piece(self, squares, moves, piece_type):
 		for square in squares:
-			piece = squares[piece]
+			piece = squares[square]
 
 			if piece_type == piece_type:
-				king_moves = moves[square]
+				return moves[square]
 	
-	def validate_no_other_pawn_same_file(squares, drop_square):
+	def validate_no_other_pawn_same_file(self, squares, drop_square):
 		for square in squares:
 
 			if square[0] == drop_square[0]:
-				piece = squares[piece]
+				piece = squares[square]
 
-				if piece == piece_type.PAWN:
+				if piece.get_piece_type() == piece_type.PAWN:
 					raise Exception("cannot place pawn at " + str(drop_square) + \
 						". Already a pawn at " + str(square))
 
 	def validate_not_last_row(self, square, side):
-		return not self.is_last_row(square, side)
+		if self.is_last_row(square, side):
+			raise Exception("pawns cannot be placed on the last row!!")
 
 	def is_last_row(self, square, side):
 		if side == side.TOP:
 			return square[1] == 4
 
-		else:
+		elif side == side.BOTTOM:
 			return square[1] == 0
+
+		else:
+			raise Exception("[error] side not rexognized " + str(side))
 
 	# moves the piece belonging to player of `side` from start_square
 	# to end_square if valid. 
@@ -366,13 +398,14 @@ class board(object):
 		legal_moves_for_piece = []
 		directions = piece.get_moves()
 
-
 		for direction in directions:
 			moves = direction
 			legal_moves_in_direction = []
 
 			for move in moves:
+
 				if move in comrade_squares:
+
 					# can't move here because another piece occupies here
 					break
 

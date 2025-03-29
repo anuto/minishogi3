@@ -102,7 +102,7 @@ def move_orthogonally(square):
 		down.append((square[0], y))
 
 	if down:
-		down.append(down)
+		moves.append(down)
 
 	return moves
 
