@@ -49,7 +49,18 @@ def main():
 
 	print_board_state(game)
 
-	game.move_piece((2, 1), (0, 3), side.TOP)
+	game.drop_piece((4, 1), piece_type.ROOK, side.TOP)
+
+	print_board_state(game)
+
+	game.move_piece((0, 4), (0, 3), side.BOTTOM)
+
+	print_board_state(game)
+
+	# [x] throws exception, which is good
+	# game.move_piece((2, 1), (0, 3), side.TOP)
+
+	game.move_piece((2, 1), (1, 2), side.TOP)
 
 	print_board_state(game)
 

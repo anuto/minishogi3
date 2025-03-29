@@ -113,10 +113,6 @@ class board(object):
 		if not self.is_legal_move(start_square, end_square, comrade_moves):
 			raise Exception("invalid move. " + str(piece) + " cannot go to " + str(end_square))
 
-		if side == side.BOTTOM:
-			print(enemy_pieces.keys())
-			print(enemy_moves.keys())
-
 		# capture
 		if end_square in enemy_pieces:
 			captured_piece = enemy_pieces[end_square]
@@ -178,14 +174,16 @@ class board(object):
 			valid_moves = piece.get_moves()
 			valid_moves = [move for direction in valid_moves for move in direction]
 
-			if start_square not in valid_moves and end_square not in valid_moves:
-				break
+			# this doesn't work?
+			# if start_square not in valid_moves and end_square not in valid_moves:
+			# 	break
 
 			legal_moves = self.get_legal_moves_for_piece(piece, enemy_squares, comrade_squares)
 
 			enemy_moves[square] = legal_moves
 
 	def is_legal_move(self, start_square, end_square, directions):
+		print("directions[start_Sqare]: " + str(directions[start_square]))
 		for direction in directions[start_square]:
 			for move in direction:
 				if end_square == move:
@@ -274,13 +272,17 @@ class board(object):
 	def get_legal_moves_for_piece(self, piece, comrade_squares, enemy_squares):
 		legal_moves_for_piece = []
 		directions = piece.get_moves()
+		print("piece: " + str(piece))
+		print("piece type: " + str(piece.get_square()))
+		print("directions: " + str(directions))
 
 		for direction in directions:
+			print("direction: " + str(direction))
 			moves = direction
 			legal_moves_in_direction = []
 
 			for move in moves:
-
+				print("move: " + str(move))
 				if move in comrade_squares:
 					# can't move here because another piece occupies here
 					break
@@ -288,12 +290,15 @@ class board(object):
 				elif move in enemy_squares:
 					# can't move past an enemy piece. Can capture but stop there then
 					legal_moves_in_direction.append(move)
+					print("yeet")
 					break
 
 				else:
 					legal_moves_in_direction.append(move)
 
+			print("adding..." + str(legal_moves_in_direction))
 			if legal_moves_in_direction:
 				legal_moves_for_piece.append(legal_moves_in_direction)
 
+		print("in total: " + str(legal_moves_for_piece))
 		return legal_moves_for_piece

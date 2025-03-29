@@ -77,27 +77,32 @@ def move_orthogonally(square):
 	for x in range(square[0] - 1,-1, -1):
 		left.append((x, square[1]))
 
-	moves.append(left)
+	if left:
+		moves.append(left)
 
 	# right
 	right = []
 	for x in range(square[0] + 1, 5):
 		right.append((x, square[1]))
 
-	moves.append(right)
+	if right:
+		moves.append(right)
 
 	# up
 	up = []
 	for y in range(square[1] - 1, -1, -1):
 		up.append((square[0], y))
 
-	moves.append(up)
+	if up:
+		moves.append(up)
 
 	# down
 	down = []
 	for y in range(square[1] + 1, 5):
 		down.append((square[0], y))
-	down.append(down)
+
+	if down:
+		down.append(down)
 
 	return moves
 
@@ -117,7 +122,8 @@ def move_diagonally(square):
 		x -= 1
 		y -= 1
 
-	moves.append(upper_left)
+	if upper_left:
+		moves.append(upper_left)
 
 	# upper right
 	x = square[0] + 1
@@ -129,7 +135,8 @@ def move_diagonally(square):
 		x += 1
 		y -= 1
 
-	moves.append(upper_right)
+	if upper_right:
+		moves.append(upper_right)
 
 	# bottom left
 	x = square[0] - 1
@@ -142,7 +149,8 @@ def move_diagonally(square):
 		x -= 1
 		y += 1
 
-	moves.append(bottom_left)
+	if bottom_left:
+		moves.append(bottom_left)
 
 	# bottom right
 	x = square[0] + 1
@@ -155,5 +163,6 @@ def move_diagonally(square):
 		x += 1
 		y += 1
 
-	moves.append(bottom_right)
+	if bottom_right:
+		moves.append(bottom_right)
 	return moves
