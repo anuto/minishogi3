@@ -30,6 +30,9 @@ class piece(object):
         self.change_side()
         self.square = None
 
+    def is_captured(self):
+        return not self.square
+
     def change_side(self):
         if self.side == side.TOP:
             self.side = side.BOTTOM

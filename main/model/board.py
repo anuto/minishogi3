@@ -336,7 +336,7 @@ class board(object):
 
 	# returns {square (x, y) => piece } for both players
 	def get_squares(self):
-		return self.top_squares | self.bottom_squares
+		return {**self.top_squares, **self.bottom_squares}
 
 	# returns {square (x, y) => piece } for top player
 	def get_top_squares(self):
