@@ -10,7 +10,7 @@ class silver_general(piece):
 	PIECE_TYPE = piece_type.SILVER_GENERAL
 
 	def get_moves(self):
-		if self.promoted_type:
+		if self.promoted_type == piece_type.GOLD_GENERAL:
 			return gold_general.get_moves()
 		else:
 			return valid_moves([

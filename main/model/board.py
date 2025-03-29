@@ -38,6 +38,7 @@ class board(object):
 
 		elif side == side.BOTTOM:
 			squares = self.bottom_squares
+
 		else:
 			raise Exception("[error] side unknown: " + str(side))
 
@@ -54,13 +55,13 @@ class board(object):
 
 		if side == side.TOP:
 			pieces = self.top_squares
-			enemy_pieces = self.bottom_squares
+			enemy_squares = self.bottom_squares
 			moves = self.top_moves
 			captured_pieces = self.top_captured_pieces
 
 		elif side == side.BOTTOM:
 			pieces = self.bottom_squares
-			enemy_pieces = self.top_squares
+			enemy_squares = self.top_squares
 			moves = self.bottom_moves
 			captured_pieces = self.bottom_captured_pieces
 
@@ -70,66 +71,76 @@ class board(object):
 		removed_piece = None
 
 		for captured_piece in captured_pieces:
+
 			if captured_piece.get_piece_type() == piece_type:
 				captured_pieces.remove(captured_piece)
 				removed_piece = captured_piece
 
+				# in case there are duplicate captured pieces
+				break
+
 		if not removed_piece:
 			raise Exception("[error] could not find captured piece of type " + str(piece_type))
+
+		# todo: add drop restrictions
 
 		removed_piece.drop(square)
 
 		pieces[square] = removed_piece
-		moves[square] = self.get_legal_moves_for_piece(removed_piece, pieces, enemy_pieces)
+		moves[square] = self.get_legal_moves_for_piece(removed_piece, pieces, enemy_squares)
+
+		self.update_board(None, square, side)
 
 	# moves the piece belonging to player of `side` from start_square
 	# to end_square if valid. 
 	# returns where the moved piece can be promoted or not
 	def move_piece(self, start_square, end_square, side):
 		if side == side.TOP:
-			comrade_pieces = self.top_squares
-			enemy_pieces = self.bottom_squares
+			comrade_squares = self.top_squares
 			comrade_moves = self.top_moves
-			enemy_moves = self.bottom_moves
 			comrade_captured_pieces = self.top_captured_pieces
 
+			enemy_squares = self.bottom_squares
+			enemy_moves = self.bottom_moves
+
 		elif side == side.BOTTOM:
-			comrade_pieces = self.bottom_squares
-			enemy_pieces = self.top_squares
+			comrade_squares = self.bottom_squares
 			comrade_moves = self.bottom_moves
-			enemy_moves = self.top_moves
 			comrade_captured_pieces = self.bottom_captured_pieces
+
+			enemy_squares = self.top_squares
+			enemy_moves = self.top_moves
 
 		else:
 			raise Exception("piece side unknown")
 
 		# invalid piece
-		if start_square not in comrade_pieces:
+		if start_square not in comrade_squares:
 			raise Exception(str(start_square) + " not found for " + str(side))
 
-		piece = comrade_pieces[start_square]
+		piece = comrade_squares[start_square]
 
 		# not consistent w how piece moves / in bounds / legal
 		if not self.is_legal_move(start_square, end_square, comrade_moves):
 			raise Exception("invalid move. " + str(piece) + " cannot go to " + str(end_square))
 
 		# capture
-		if end_square in enemy_pieces:
-			captured_piece = enemy_pieces[end_square]
+		if end_square in enemy_squares:
+			captured_piece = enemy_squares[end_square]
 			
 			captured_piece.set_captured()
 			comrade_captured_pieces.append(captured_piece)
 
-			enemy_pieces.pop(end_square)
+			enemy_squares.pop(end_square)
 			enemy_moves.pop(end_square)
 
 		piece.move(end_square)
 
-		comrade_pieces.pop(start_square)
-		comrade_pieces[end_square] = piece
+		comrade_squares.pop(start_square)
+		comrade_squares[end_square] = piece
 
 		comrade_moves.pop(start_square)
-		comrade_moves[end_square] = self.get_legal_moves_for_piece(piece, comrade_pieces, enemy_pieces)
+		comrade_moves[end_square] = self.get_legal_moves_for_piece(piece, comrade_squares, enemy_squares)
 
 		self.update_board(start_square, end_square, side)
 
@@ -142,20 +153,23 @@ class board(object):
 			enemy_squares = self.bottom_squares
 
 		elif side == side.BOTTOM:
-			enemy_moves  = self.top_moves
-			enemy_squares = self.top_squares
-
 			comrade_moves = self.bottom_moves
 			comrade_squares = self.bottom_squares
+
+			enemy_moves  = self.top_moves
+			enemy_squares = self.top_squares
 
 		else:
 			raise Exception("[error] unknown side")
 
+		self.update_board_by_side(comrade_squares, enemy_squares, comrade_moves, start_square, end_square)
+		self.update_board_by_side(enemy_squares, comrade_squares, enemy_moves, start_square, end_square)
+
+	def update_board_by_side(self, comrade_squares, enemy_squares, moves, start_square, end_square):
 		for square in comrade_squares:
 
 			piece = comrade_squares[square]
 
-			# only need to update piece moves if it is now unblocked or was blocked
 			valid_moves = piece.get_moves()
 			valid_moves = [move for direction in valid_moves for move in direction]
 
@@ -163,27 +177,9 @@ class board(object):
 				break
 
 			legal_moves = self.get_legal_moves_for_piece(piece, comrade_squares, enemy_squares)
-
-			comrade_moves[square] = legal_moves
-
-		for square in enemy_squares:
-
-			piece = enemy_squares[square]
-
-			# only need to update piece moves if it is now unblocked or was blocked
-			valid_moves = piece.get_moves()
-			valid_moves = [move for direction in valid_moves for move in direction]
-
-			# this doesn't work?
-			# if start_square not in valid_moves and end_square not in valid_moves:
-			# 	break
-
-			legal_moves = self.get_legal_moves_for_piece(piece, enemy_squares, comrade_squares)
-
-			enemy_moves[square] = legal_moves
+			moves[square] = legal_moves
 
 	def is_legal_move(self, start_square, end_square, directions):
-		print("directions[start_Sqare]: " + str(directions[start_square]))
 		for direction in directions[start_square]:
 			for move in direction:
 				if end_square == move:
@@ -193,18 +189,22 @@ class board(object):
 
 	def promotion_possible(self, start_square, end_square, side):
 		if side == side.TOP:
-			pieces = self.get_top_squares()
+			squares = self.get_top_squares()
 
 		elif side == side.BOTTOM:
-			pieces = self.get_bottom_squares()
+			squares = self.get_bottom_squares()
 
 		else:
 			raise Exception("[error] unrecognized side: " + side)
-		piece = pieces[end_square]
+
+		piece = squares[end_square]
 		promotions = piece.get_promotions()
+
 		if not promotions:
 			return False
 
+		# promotions are valid from previous drops if they are moving within
+		# or out of the promotion zone
 		if side == side.TOP:
 			return start_square[1] == 4 or end_square[1] == 4
 
@@ -245,16 +245,17 @@ class board(object):
 
 	# self.top_squares / bottom_squares = {(square) => < PIECE >}
 	def setup_squares(self, top_pieces, bottom_pieces):
-		self.top_squares = {}
-		self.bottom_squares = {}
+		self.top_squares = self.setup_squares_by_side(top_pieces)
+		self.bottom_squares = self.setup_squares_by_side(bottom_pieces)
 
-		for piece in top_pieces:
-			square = piece.get_square()
-			self.top_squares[square] = piece
+	def setup_squares_by_side(self, pieces):
+		squares_to_pieces = {}
 
-		for piece in bottom_pieces:
+		for piece in pieces:
 			square = piece.get_square()
-			self.bottom_squares[square] = piece
+			squares_to_pieces[square] = piece
+
+		return squares_to_pieces
 
 	def setup_moves(self):
 		self.top_moves = self.setup_moves_by_side(self.get_top_pieces(), self.top_squares, self.bottom_squares)
@@ -269,20 +270,17 @@ class board(object):
 
 		return legal_moves
 
+	# returns directions[[squares in order from origin in that direction] ...]
 	def get_legal_moves_for_piece(self, piece, comrade_squares, enemy_squares):
 		legal_moves_for_piece = []
 		directions = piece.get_moves()
-		print("piece: " + str(piece))
-		print("piece type: " + str(piece.get_square()))
-		print("directions: " + str(directions))
+
 
 		for direction in directions:
-			print("direction: " + str(direction))
 			moves = direction
 			legal_moves_in_direction = []
 
 			for move in moves:
-				print("move: " + str(move))
 				if move in comrade_squares:
 					# can't move here because another piece occupies here
 					break
@@ -290,15 +288,12 @@ class board(object):
 				elif move in enemy_squares:
 					# can't move past an enemy piece. Can capture but stop there then
 					legal_moves_in_direction.append(move)
-					print("yeet")
 					break
 
 				else:
 					legal_moves_in_direction.append(move)
 
-			print("adding..." + str(legal_moves_in_direction))
 			if legal_moves_in_direction:
 				legal_moves_for_piece.append(legal_moves_in_direction)
 
-		print("in total: " + str(legal_moves_for_piece))
 		return legal_moves_for_piece
