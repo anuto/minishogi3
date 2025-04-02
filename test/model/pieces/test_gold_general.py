@@ -13,19 +13,20 @@ class TestGoldGeneral():
 
         assert test_gold_general.get_piece_type() == piece_type.GOLD_GENERAL
         assert test_gold_general.get_square() == (3, 0)
-        assert test_gold_general.get_moves() == expected_moves
+        utils.assert_lists_of_lists_equal(expected_moves, test_gold_general.get_moves())
         assert test_gold_general.get_side() == side.TOP
         
         promotions = test_gold_general.get_promotions()
         expected_promotions = []
 
-        utils.assert_contains_equal(promotions, expected_promotions)
+        utils.assert_lists_equal(promotions, expected_promotions)
 
         unreachable_squares = utils.get_all_squares()
 
-        for move in expected_moves:
-            assert test_gold_general.can_move_to(move)
-            unreachable_squares.remove(move)
+        for direction in expected_moves:
+            for move in direction:
+                assert test_gold_general.can_move_to(move)
+                unreachable_squares.remove(move)
 
         utils.validate_cannot_move_to_squares(test_gold_general, unreachable_squares)
 

@@ -13,26 +13,23 @@ class Utils:
         return squares
 
 
-    def assert_contains_equal(expected, actual):
-        is_nested = any(isinstance(item, list) for item in expected)
-        
-        if is_nested:
-            sorted_expected = []
-            for lists in expected:
-                sorted_expected.append(sorted(lists))
+    def assert_lists_equal(expected, actual):
+        assert sorted(expected) == sorted(actual)
 
-            sorted_actual = []
-            for lists in actual:
-                sorted_actual.append(sorted(lists))
+    def assert_lists_of_lists_equal(expected, actual):
+        sorted_expected = []
+        for lists in expected:
+            sorted_expected.append(tuple(sorted(lists)))
 
-            sorted_expected = sorted(sorted_expected)
-            sorted_actual = sorted(sorted_actual)
+        sorted_actual = []
+        for lists in actual:
+            sorted_actual.append(tuple(sorted(lists)))
 
-            # todo #1: fix nested comparison
-            # assert collections.Counter(sorted_expected) == collections.Counter(sorted_actual)
+        sorted_expected = sorted(sorted_expected)
+        sorted_actual = sorted(sorted_actual)
 
-        else:
-            assert sorted(expected) == sorted(actual)
+        assert sorted_expected == sorted_actual
+        # assert collections.Counter(sorted_expected) == collections.Counter(sorted_actual)
 
     def validate_cannot_move_to_squares(test_pawn, squares):
         for square in squares:
