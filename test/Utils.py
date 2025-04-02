@@ -3,15 +3,6 @@ import collections
 
 class Utils:
 
-    def get_all_squares():
-        squares = []
-
-        for y in range(0, 5):
-            for x in range(0, 5):
-                squares.append((x, y))
-
-        return squares
-
 
     def assert_lists_equal(expected, actual):
         assert sorted(expected) == sorted(actual)
@@ -31,6 +22,21 @@ class Utils:
         assert sorted_expected == sorted_actual
         # assert collections.Counter(sorted_expected) == collections.Counter(sorted_actual)
 
-    def validate_cannot_move_to_squares(test_pawn, squares):
-        for square in squares:
-            assert not test_pawn.can_move_to(square)
+
+    def assert_can_only_move_to_expected_squares(piece, expected_moves):
+        # get all squares
+        unreachable_squares = []
+
+        for y in range(0, 5):
+            for x in range(0, 5):
+                unreachable_squares.append((x, y))
+
+        # validate we can move where we should be able to
+        for direction in expected_moves:
+            for move in direction:
+                assert piece.can_move_to(move)
+                unreachable_squares.remove(move)
+
+        # validate we can't move where we shouldn't be able to
+        for square in unreachable_squares:
+            assert not piece.can_move_to(square)

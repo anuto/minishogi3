@@ -9,32 +9,30 @@ class TestPawn():
     def test_initialize_top_pawn(self, utils):
         test_pawn = pawn(side.TOP)
 
+        expected_moves = [[(4, 2)]]
+
         assert test_pawn.get_piece_type() == piece_type.PAWN
         assert test_pawn.get_square() == (4, 1)
-        assert test_pawn.get_moves() == [[(4, 2)]]
+        utils.assert_lists_of_lists_equal(expected_moves, test_pawn.get_moves())
         assert test_pawn.get_side() == side.TOP
         
         promotions = test_pawn.get_promotions()
         expected_promotions = [piece_type.SILVER_GENERAL, piece_type.GOLD_GENERAL]
 
         utils.assert_lists_equal(promotions, expected_promotions)
-        assert test_pawn.can_move_to((4,2))
 
-        all_squares = utils.get_all_squares()
-
-        # the one square it should be able to go to...
-        all_squares.remove((4, 2))
-
-        utils.validate_cannot_move_to_squares(test_pawn, all_squares)
+        utils.assert_can_only_move_to_expected_squares(test_pawn, expected_moves)
 
         assert not test_pawn.is_captured()
 
     def test_initialize_bottom_pawn(self, utils):
         test_pawn = pawn(side.BOTTOM)
 
+        expected_moves = [[(0, 2)]]
+
         assert test_pawn.get_piece_type() == piece_type.PAWN
         assert test_pawn.get_square() == (0, 3)
-        assert test_pawn.get_moves() == [[(0, 2)]]
+        utils.assert_lists_of_lists_equal(expected_moves, test_pawn.get_moves())
         assert test_pawn.get_side() == side.BOTTOM
         
         promotions = test_pawn.get_promotions()
@@ -42,14 +40,9 @@ class TestPawn():
 
         assert collections.Counter(expected_promotions) == collections.Counter(expected_promotions)
 
-        assert test_pawn.can_move_to((0, 2))
+        utils.assert_lists_equal(promotions, expected_promotions)
 
-        all_squares = utils.get_all_squares()
-
-        # the one square it should be able to go to...
-        all_squares.remove((0, 2))
-
-        utils.validate_cannot_move_to_squares(test_pawn, all_squares)
+        utils.assert_can_only_move_to_expected_squares(test_pawn, expected_moves)
 
         assert not test_pawn.is_captured()
 
@@ -58,34 +51,28 @@ class TestPawn():
 
         test_pawn.move((0, 2))
 
+        expected_moves = [[(0, 1)]]
+
         assert test_pawn.get_square() == (0, 2)
-        assert test_pawn.get_moves() == [[(0, 1)]]
-        assert test_pawn.can_move_to((0, 1))
+        utils.assert_lists_of_lists_equal(expected_moves, test_pawn.get_moves())
 
-        all_squares = utils.get_all_squares()
+        utils.assert_can_only_move_to_expected_squares(test_pawn, expected_moves)
 
-        # the one square it should be able to go to...
-        all_squares.remove((0, 1))
-
-        for square in all_squares:
-            assert not test_pawn.can_move_to(square)
+        assert not test_pawn.is_captured()
 
     def test_move_top_pawn(self, utils):
         test_pawn = pawn(side.TOP)
 
         test_pawn.move((4, 2))
 
+        expected_moves = [[(4, 3)]]
+
         assert test_pawn.get_square() == (4, 2)
-        assert test_pawn.get_moves() == [[(4, 3)]]
-        assert test_pawn.can_move_to((4, 3))
+        utils.assert_lists_of_lists_equal(expected_moves, test_pawn.get_moves())
 
-        all_squares = utils.get_all_squares()
+        utils.assert_can_only_move_to_expected_squares(test_pawn, expected_moves)
 
-        # the one square it should be able to go to...
-        all_squares.remove((4, 3))
-
-        for square in all_squares:
-            assert not test_pawn.can_move_to(square)
+        assert not test_pawn.is_captured()
 
     def test_change_top_to_bottom(self):
         test_pawn = pawn(side.TOP)
